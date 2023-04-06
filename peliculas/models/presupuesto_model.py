@@ -44,7 +44,6 @@ class PresupuestoModel(models.Model):
         comodel_name = 'genero',string='Genero')
     description = fields.Text('Descripcion')
     link_trailer = fields.Char()
-
     is_book = fields.Boolean('Version libro')
     book = fields.Binary('Libro')
     book_filename = fields.Char()
