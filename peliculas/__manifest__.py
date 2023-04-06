@@ -12,7 +12,7 @@
     'data':[
         'views\menu.xml',
         'views\presupuesto_views.xml',
-        'data\cron.xml'
+        'data\mycron.xml'
     ],
 
 }

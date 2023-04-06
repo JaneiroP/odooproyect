@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
 
-    <record id="view_presupuesto_form" model="ir.ui.view">
+
+    <record id="view_presupuesto_model_form" model="ir.ui.view">
         <field name="name">presupuesto.model.form</field>
         <field name="model">presupuesto.model</field>
         <field name="arch" type="xml">
@@ -13,9 +14,12 @@
                     <button string="Cancelar" type="object" name="cancelar_presupuesto" states="borrador,aprobado"/>
                     <field name="state" widget="statusbar" statusbar_visible="borrador,aprobado"/>
                 </header>
+                <div class="alert alert-info" role="alert" style="margin-bottom:0" attrs="{'invisible': [('classificationDesc','=','False')]}">
+                    <field name="classificationDesc" readonly="1" force_save="1"/>
+                </div>
                 <sheet>
                     <widget name="web_ribbon" title="Dionibel usa crack" bg_color="bg-primary"
-                            attrs="{'invisible':[('active','=',True)]}"></widget>
+                            attrs="{'invisible':[('active','=',True)]}"/>
                     <field name="image_1920" widget="image" class="oe_avatar"
                            option="{'preview_image':'image_120','size':[128,128]}"/>
 
@@ -36,11 +40,11 @@
                             <field name="classification" required="1"/>
                             <span class="fa fa-circle"
                                   attrs="{'invisible':[('classification','=',False),('premiereDate','=',False)]}"
-                                  style="font-size:8px;"></span>
+                                  style="font-size:8px;"> </span>
                             <field name="premiereDate"/>
                         </div>
                         <div class="o_row">
-                            <field name="genero_ids" widget="many2many_tags" style="display:flex;"></field>
+                            <field name="genero_ids" widget="many2many_tags" style="display:flex;"/>
                         </div>
                     </div>
                     <group string="Datos personales" style="margin-top:-10px;">
