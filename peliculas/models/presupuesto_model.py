@@ -49,7 +49,6 @@ class PresupuestoModel(models.Model):
     book = fields.Binary('Libro')
     book_filename = fields.Char()
 
-
     state = fields.Selection([
         ("borrador","Borrador"),
         ("aprobado","Aprobado"),
