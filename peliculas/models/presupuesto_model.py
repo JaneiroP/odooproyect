@@ -48,6 +48,7 @@ class PresupuestoModel(models.Model):
     is_book = fields.Boolean('Version libro')
     book = fields.Binary('Libro')
     book_filename = fields.Char()
+
     state = fields.Selection([
         ("borrador","Borrador"),
         ("aprobado","Aprobado"),
