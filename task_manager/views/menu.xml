@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="action_open_proyects" model="ir.actions.act_window">
+        <field name="name">Proyects</field>
+        <field name="res_model">task.proyect</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_principal" name="Tasks"/>
+    <menuitem id="menu_horizontal_proyects" name="My Proyects" parent="menu_principal" action="action_open_proyects"/>
+
+</odoo>

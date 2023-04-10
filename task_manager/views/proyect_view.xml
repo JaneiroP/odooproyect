@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_task_proyect_form" model="ir.ui.view">
+        <field name="name">task.proyect.form</field>
+        <field name="model">task.proyect</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button string="In progress" type="object" name="to_in_progress" class="oe_highlight"
+                            states="draft"/>
+                    <button string="Finished" type="object" name="to_finished" class="oe_highlight"
+                            states="in progress"/>
+                    <button string="Cancelled" type="object" name="to_cancelled" class="oe_highlight"
+                            states="in progress"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in progress,finished,cancelled"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="start_date"/>
+                            <field name="finish_date"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                            <field name="responsable_id"/>
+                        </group>
+                    </group>
+                    <field name="delegate_ids"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_task_proyect_search" model="ir.ui.view">
+            <field name="name">task.proyect.search</field>
+            <field name="model">task.proyect</field>
+            <field name="arch" type="xml">
+                <search string="Task">
+                    <field name="name"/>
+                </search>
+            </field>
+    </record>
+</odoo>

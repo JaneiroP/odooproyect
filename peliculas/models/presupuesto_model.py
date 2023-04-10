@@ -11,9 +11,18 @@ logger = logging.getLogger(__name__)
 class PresupuestoModel(models.Model):
     _name='presupuesto.model'
     _inherit = 'image.mixin'
+
+    @api.depends('detalle_ids')
+    def _compute_total(self):
+        for record in self:
+            sub_total = 0
+            for linea in record.detalle_ids:
+                sub_total += linea.importe
+            record.base = sub_total
+            record.impuestos = sub_total * 0.18
+            record.total = sub_total + record.impuestos
+
     name = fields.Char('Nombre')
-
-
 
     premiereDate = fields.Datetime('Fecha de estreno')
     classification = fields.Selection([
@@ -31,14 +40,26 @@ class PresupuestoModel(models.Model):
 
     active = fields.Boolean('Activo')
 
+    director_id = fields.Many2one(
+        comodel_name='res.partner', string='Director')
+
     director_category_id = fields.Many2one(
         comodel_name='res.partner.category',
         string='Categoria Director',
-        default = lambda self: self.env['res.partner.category'].search([('name','=','Director')])
+        #primera version
+        #default = lambda self: self.env['res.partner.category'].search([('name','=','Director')])
+        #segunda version
+        default=lambda self: self.env.ref('peliculas.category_director')
     )
-    director_id = fields.Many2one(
-        comodel_name = 'res.partner',string='Director')
 
+    actor_ids = fields.Many2many(
+        comodel_name='res.partner', string='Actores')
+
+    actor_category_id = fields.Many2one(
+        comodel_name='res.partner.category',
+        string='Categoria Actor',
+        default=lambda self: self.env.ref('peliculas.category_actor')
+    )
 
     genero_ids = fields.Many2many(
         comodel_name = 'genero',string='Genero')
@@ -55,6 +76,41 @@ class PresupuestoModel(models.Model):
         ("cancelado","Cancelado")],default="borrador",string="Estado",copy=False)
     approvedDate = fields.Datetime('Fecha aprovado', copy=False)
 
+    budget_number = fields.Char('Numero de presupuesto',copy=False)
+    creation_date = fields.Datetime('Fecha de creacion', copy=False,
+                                    default=lambda self: fields.Datetime.now())
+    opinion = fields.Html('Opinion')
+
+    detalle_ids = fields.One2many(
+        comodel_name='presupuesto.detalle',
+        inverse_name='presupuesto_id',
+        string='Detalle'
+    )
+
+    campos_ocultos = fields.Boolean(string='Mostrar campos ocultos')
+
+    # moneda a usar
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        string='Moneda',
+        default=lambda self: self.env.company.currency_id.id
+    )
+
+    terminos = fields.Text('Terminos y condiciones')
+    base = fields.Monetary(
+        string='Base imponible',
+        compute='_compute_total'
+    )
+    impuestos = fields.Monetary(
+        string='Impuestos',
+        compute='_compute_total'
+    )
+    total = fields.Monetary(
+        string='Total',
+        compute='_compute_total'
+    )
+
+
     def aprobar_presupuesto(self):
         logger.info('Aprobar...')
         self.state = 'aprobado'
@@ -67,14 +123,21 @@ class PresupuestoModel(models.Model):
 #Delete a register
     def unlink(self):
         logger.info('Se desparo la funcion unlink')
-        if self.state != 'cancelado':
-          raise UserError('No se puede borrar el registro porque no se encuentra en el estado cancelado')
-        super(PresupuestoModel, self).unlink()
+        #se utiliza bucle para poder borrar muchos registros a la vez
+        for record in self:
+            if record.state != 'cancelado':
+                raise UserError('No se puede borrar el registro porque no se encuentra en el estado cancelado')
+            super(PresupuestoModel, record).unlink()
+
 
 
     @api.model
     def create(self,variables):
         logger.info(f'{variables}')
+        sequence_obj = self.env['ir.sequence']
+        #funcion que devuelve proxima sequencia
+        correlativo = sequence_obj.next_by_code('sequencia.presupuesto.pelicula')
+        variables['budget_number'] = correlativo
         return super(PresupuestoModel, self).create(variables)
 
     def write(self,variables):
@@ -104,6 +167,52 @@ class PresupuestoModel(models.Model):
                 self.classificationDesc = 'No menores de 17 años'
         else:
             self.classificationDesc = False
+
+class PresupuestoDetalle(models.Model):
+    _name = "presupuesto.detalle"
+
+    presupuesto_id = fields.Many2one(
+        comodel_name='presupuesto.model',
+        string='Presupuesto'
+    )
+    name = fields.Many2one('recurso.cinematografico', string="Recurso")
+    description = fields.Char('Descripcion', related="name.description")
+    contacto_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Contacto',
+        related='name.contacto_id'
+    )
+    imagen = fields.Binary(
+        string='Imagen',
+        related='name.imagen'
+    )
+    cantidad = fields.Float(
+        string='Cantidad',
+        default=1.0,
+        digits=(16, 4)
+    )
+    precio = fields.Float(
+        string='Precio',
+        digits='Product Price'
+    )
+    importe = fields.Monetary(
+        string='Importe '
+    )
+    #moneda a usar
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        string='Moneda',
+        related='presupuesto_id.currency_id'
+    )
+
+    @api.onchange('name')
+    def _onchange_name(self):
+        if self.name:
+            self.precio = self.name.precio
+
+    @api.onchange('cantidad', 'precio')
+    def _onchange_importe(self):
+        self.importe = self.cantidad * self.precio
 
     def validate_book(self):
         print('hi')

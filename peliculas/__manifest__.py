@@ -10,6 +10,8 @@
     'summary':'Modulo de presupuesto de peliculas',
     'description':'Este modulo va a servir para hacer presupuestos de peliculas',
     'data':[
+        'data\categoria.xml',
+        'data\secuencia.xml',
         'views\menu.xml',
         'views\presupuesto_views.xml',
         'data\mycron.xml'
