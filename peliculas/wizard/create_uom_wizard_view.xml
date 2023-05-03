@@ -1,0 +1,29 @@
+<odoo>
+    <record id="create_uom_wizard_view" model="ir.ui.view">
+        <field name="name">create.uom.wizard.form</field>
+        <field name="model">create.uom.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="uom_id"/>
+                    <field name="name"/>
+                    <field name="factor"/>
+                </group>
+                <footer>
+                    <button name="create_uom" string="Create UOM" type="object" class="btn-primary"/>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_create_uom_wizard" model="ir.actions.act_window">
+            <field name="name">Create UOM Wizard</field>
+            <field name="res_model">create.uom.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_create_uom_wizard" name="Create UOM Wizard" action="action_create_uom_wizard" parent="product.product_uom_menu"/>
+</odoo>

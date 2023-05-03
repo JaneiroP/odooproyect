@@ -8,9 +8,11 @@ from odoo.exceptions import UserError
 
 logger = logging.getLogger(__name__)
 
+
 class PresupuestoModel(models.Model):
     _name='presupuesto.model'
     _inherit = 'image.mixin'
+    _order = 'creation_date desc'
 
     @api.depends('detalle_ids')
     def _compute_total(self):
@@ -38,7 +40,7 @@ class PresupuestoModel(models.Model):
     score = fields.Integer('Puntuacion', related="scoreReference")
     scoreReference = fields.Integer('Puntuacion')
 
-    active = fields.Boolean('Activo')
+    active = fields.Boolean('Activo', default= True)
 
     director_id = fields.Many2one(
         comodel_name='res.partner', string='Director')
@@ -112,6 +114,14 @@ class PresupuestoModel(models.Model):
 
 
     def aprobar_presupuesto(self):
+
+        # logica regex
+        name = '2250/14r18'
+        if 'r' in name:
+            print('have r')
+            index_r = name.find('r')
+            print(index_r)
+
         logger.info('Aprobar...')
         self.state = 'aprobado'
         self.approvedDate = fields.Datetime.now()
@@ -232,3 +242,15 @@ class PresupuestoDetalle(models.Model):
             #convertir timezone
         nextcall = start_date.astimezone(user_tz).replace(tzinfo=None)
         print(nextcall)
+
+
+# class NameSearchDemo(models.Model):
+#     _inherit = 'product.template'
+#
+#     @api.model
+#     def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
+#         args = args or []
+#         domain = []
+#         if name:
+#             domain = [('name', operator, name)]
+#         return self._search_name(domain + args, limit=limit, access_rights_uid=name_get_uid)
