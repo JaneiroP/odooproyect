@@ -25,5 +25,4 @@
             <field name="target">new</field>
     </record>
 
-    <menuitem id="menu_create_uom_wizard" name="Create UOM Wizard" action="action_create_uom_wizard" parent="product.product_uom_menu"/>
 </odoo>

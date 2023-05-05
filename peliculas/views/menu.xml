@@ -16,5 +16,7 @@
     <menuitem id="menu_horizontal" name="Mis modelos" parent="menu_principal"/>
     <menuitem id="menu_vertical_presupuesto" name="Presupuesto" parent="menu_horizontal" action="action_open_presupuesto"/>
     <menuitem id="menu_vertical_recursos_cinematograficos" name="Recurso cinematografico" parent="menu_horizontal" action="action_open_recurso_cinematografico"/>
+    <menuitem id="mimenu" name="example" action="action_open_update_wizard" parent="menu_horizontal"/>
+    <menuitem id="menu_create_uom_wizard" name="Create UOM Wizard" action="action_create_uom_wizard" parent="menu_horizontal"/>
 
 </odoo>
